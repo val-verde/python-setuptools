@@ -945,9 +945,9 @@ int main (int argc, char **argv) {
         self, libname, lib_type='static', strip_dir=0, output_dir=''  # or 'shared'
     ):
         assert output_dir is not None
-        if lib_type not in ("static", "shared", "dylib", "xcode_stub"):
+        if lib_type not in ("static", "shared", "dll", "dylib", "xcode_stub"):
             raise ValueError(
-                "'lib_type' must be \"static\", \"shared\", \"dylib\", or \"xcode_stub\""
+                "'lib_type' must be \"static\", \"shared\", \"dll\", \"dylib\", or \"xcode_stub\""
             )
         fmt = getattr(self, lib_type + "_lib_format")
         ext = getattr(self, lib_type + "_lib_extension")

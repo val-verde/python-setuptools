@@ -132,9 +132,10 @@ class UnixCCompiler(CCompiler):
     obj_extension = ".o"
     static_lib_extension = ".a"
     shared_lib_extension = ".so"
+    dll_lib_extension = ".dll.a"
     dylib_lib_extension = ".dylib"
     xcode_stub_lib_extension = ".tbd"
-    static_lib_format = shared_lib_format = dylib_lib_format = "lib%s%s"
+    static_lib_format = shared_lib_format = dll_lib_format = dylib_lib_format = "lib%s%s"
     xcode_stub_lib_format = dylib_lib_format
     if sys.platform == "cygwin":
         exe_extension = ".exe"
@@ -319,6 +320,7 @@ class UnixCCompiler(CCompiler):
 
     def find_library_file(self, dirs, lib, debug=0):
         shared_f = self.library_filename(lib, lib_type='shared')
+        dll_f = self.library_filename(lib, lib_type='dll')
         dylib_f = self.library_filename(lib, lib_type='dylib')
         xcode_stub_f = self.library_filename(lib, lib_type='xcode_stub')
         static_f = self.library_filename(lib, lib_type='static')
@@ -351,6 +353,7 @@ class UnixCCompiler(CCompiler):
 
         for dir in dirs:
             shared = os.path.join(dir, shared_f)
+            dll = os.path.join(dir, dll_f)
             dylib = os.path.join(dir, dylib_f)
             static = os.path.join(dir, static_f)
             xcode_stub = os.path.join(dir, xcode_stub_f)
@@ -369,7 +372,9 @@ class UnixCCompiler(CCompiler):
             # data to go on: GCC seems to prefer the shared library, so I'm
             # assuming that *all* Unix C compilers do.  And of course I'm
             # ignoring even GCC's "-static" option.  So sue me.
-            if os.path.exists(dylib):
+            if os.path.exists(dll):
+                return dll
+            elif os.path.exists(dylib):
                 return dylib
             elif os.path.exists(xcode_stub):
                 return xcode_stub
