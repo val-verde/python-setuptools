@@ -313,7 +313,7 @@ class UnixCCompiler(CCompiler):
             # instead of just an RPATH.
             return "-Wl,--enable-new-dtags,-R" + dir
         else:
-            return "-Wl,-R" + dir
+            return ""
 
     def library_option(self, lib):
         return "-l" + lib
