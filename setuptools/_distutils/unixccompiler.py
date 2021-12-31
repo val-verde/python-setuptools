@@ -14,6 +14,7 @@ the "typical" Unix-style command-line C compiler:
 """
 
 import os, sys, re, shlex
+import sysconfig as host_sysconfig
 
 from distutils import sysconfig
 from distutils.dep_util import newer
@@ -289,7 +290,7 @@ class UnixCCompiler(CCompiler):
         # this time, there's no way to determine this information from
         # the configuration data stored in the Python installation, so
         # we use this hack.
-        if sys.platform[:6] == "darwin":
+        if host_sysconfig.get_platform()[:6] == "darwin":
             from distutils.util import get_macosx_target_ver, split_version
 
             macosx_target_ver = get_macosx_target_ver()
@@ -297,9 +298,9 @@ class UnixCCompiler(CCompiler):
                 return "-Wl,-rpath," + dir
             else:  # no support for -rpath on earlier macOS versions
                 return "-L" + dir
-        elif sys.platform[:7] == "freebsd":
+        elif host_sysconfig.get_platform()[:7] == "freebsd":
             return "-Wl,-rpath=" + dir
-        elif sys.platform[:5] == "hp-ux":
+        elif host_sysconfig.get_platform()[:5] == "hp-ux":
             return [
                 "-Wl,+s" if self._is_gcc() else "+s",
                 "-L" + dir,
@@ -308,7 +309,7 @@ class UnixCCompiler(CCompiler):
         # For all compilers, `-Wl` is the presumed way to
         # pass a compiler option to the linker and `-R` is
         # the way to pass an RPATH.
-        if sysconfig.get_config_var("GNULD") == "yes":
+        if sysconfig.get_config_var("GNULD") == "yes" and host_sysconfig.get_platform()[:5] != "win32":
             # GNU ld needs an extra option to get a RUNPATH
             # instead of just an RPATH.
             return "-Wl,--enable-new-dtags,-R" + dir
