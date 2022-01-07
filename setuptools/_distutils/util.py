@@ -60,7 +60,7 @@ def get_platform():
     return get_host_platform()
 
 
-if sys.platform == 'darwin':
+if sysconfig.get_platform().startswith('darwin'):
     _syscfg_macosx_ver = None  # cache the version pulled from sysconfig
 MACOSX_VERSION_VAR = 'MACOSX_DEPLOYMENT_TARGET'
 
